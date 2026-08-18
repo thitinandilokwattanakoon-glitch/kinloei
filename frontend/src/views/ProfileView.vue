@@ -56,6 +56,7 @@
             placeholder="พิมพ์แล้วกด Enter เช่น เบาหวาน"
             @keydown.enter.prevent="addTag(conditions, 'conditionInput')"
           />
+          <button type="button" class="btn-ghost-add" @click="addTag(conditions, 'conditionInput')">+ เพิ่ม</button>
         </div>
       </section>
 
@@ -73,6 +74,7 @@
             placeholder="พิมพ์แล้วกด Enter เช่น กุ้ง, ถั่วลิสง"
             @keydown.enter.prevent="addTag(allergies, 'allergyInput')"
           />
+          <button type="button" class="btn-ghost-add" @click="addTag(allergies, 'allergyInput')">+ เพิ่ม</button>
         </div>
       </section>
 
@@ -90,6 +92,7 @@
             placeholder="พิมพ์แล้วกด Enter เช่น ผงชูรส, สีผสมอาหาร"
             @keydown.enter.prevent="addTag(avoidIngredients, 'avoidInput')"
           />
+          <button type="button" class="btn-ghost-add" @click="addTag(avoidIngredients, 'avoidInput')">+ เพิ่ม</button>
         </div>
       </section>
 
@@ -344,6 +347,8 @@ onMounted(() => {
   font-size: 11px; padding: 2px; line-height: 1;
 }
 .chip-x:hover { opacity: 1; }
+
+.tag-input .btn-ghost-add { flex-shrink: 0; white-space: nowrap; }
 
 textarea {
   width: 100%; border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px;
