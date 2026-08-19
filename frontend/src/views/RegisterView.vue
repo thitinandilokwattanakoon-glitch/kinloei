@@ -13,11 +13,7 @@
 
       <div class="form-center">
       <div class="form-card">
-        <span class="pill">
-          <span class="pill-dot"></span>
-          สมัครสมาชิก
-        </span>
-        <h2>สร้างบัญชีใหม่</h2>
+        <h2>สร้างโปรไฟล์ใหม่</h2>
         <p class="form-sub">ใช้เวลาไม่ถึงนาที เริ่มสแกนได้ทันที</p>
 
         <form @submit.prevent="handleRegister">
@@ -75,12 +71,12 @@
 
           <label class="checkbox terms">
             <input type="checkbox" v-model="agree" required />
-            <span>ยอมรับ <a href="#" @click.prevent>ข้อกำหนดการใช้งาน</a> และ <a href="#" @click.prevent>นโยบายความเป็นส่วนตัว</a></span>
+            <span>ฉันเข้าใจว่า "กินเลย" ใช้ AI วิเคราะห์ฉลากอาหาร ซึ่งอาจมีความคลาดเคลื่อน ไม่สามารถใช้ทดแทนคำวินิจฉัยทางการแพทย์ได้ และฉันจะตรวจสอบข้อมูลซ้ำด้วยตนเองก่อนตัดสินใจรับประทานอาหารที่มีความเสี่ยงสูง</span>
           </label>
 
           <button class="cta-btn" type="submit" :disabled="loading || !canSubmit">
-            <span v-if="!loading">สร้างบัญชี</span>
-            <span v-else class="loading-dots">กำลังสร้างบัญชี<i></i><i></i><i></i></span>
+            <span v-if="!loading">บันทึกโปรไฟล์</span>
+            <span v-else class="loading-dots">กำลังบันทึกโปรไฟล์<i></i><i></i><i></i></span>
           </button>
         </form>
 
@@ -176,11 +172,11 @@ async function handleRegister() {
       displayName: `${firstName.value} ${lastName.value}`.trim(),
       deviceId: getDeviceId(),
     })
-    toast.value = 'สมัครสมาชิกสำเร็จ'
+    toast.value = 'บันทึกโปรไฟล์สำเร็จ'
     setTimeout(() => router.push('/'), 600)
   } catch (err) {
     toastIsError.value = true
-    toast.value = err.message || 'สมัครสมาชิกไม่สำเร็จ ลองใหม่อีกครั้ง'
+    toast.value = err.message || 'บันทึกโปรไฟล์ไม่สำเร็จ ลองใหม่อีกครั้ง'
   } finally {
     loading.value = false
   }
@@ -201,7 +197,7 @@ async function handleRegister() {
 /* Form side */
 .form-side { display: flex; flex-direction: column; min-height: 100vh; padding: 32px 40px; background: var(--bg); overflow-y: auto; }
 .form-topbar { display: flex; align-items: center; justify-content: space-between; }
-.form-center { flex: 1; display: flex; align-items: center; justify-content: center; }
+.form-center { flex: 1; display: flex; align-items: flex-start; justify-content: center; padding-top: 28px; }
 .back-link {
   display: flex; align-items: center; gap: 6px; color: var(--muted); text-decoration: none;
   font-size: 13.5px; font-weight: 600;
