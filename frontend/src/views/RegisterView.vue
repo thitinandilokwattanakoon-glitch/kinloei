@@ -13,7 +13,11 @@
 
       <div class="form-center">
       <div class="form-card">
-        <h2>สร้างโปรไฟล์ใหม่</h2>
+        <span class="pill">
+          <span class="pill-dot"></span>
+          สมัครสมาชิก
+        </span>
+        <h2>สร้างบัญชีใหม่</h2>
         <p class="form-sub">ใช้เวลาไม่ถึงนาที เริ่มสแกนได้ทันที</p>
 
         <form @submit.prevent="handleRegister">
@@ -71,12 +75,12 @@
 
           <label class="checkbox terms">
             <input type="checkbox" v-model="agree" required />
-            <span>ฉันเข้าใจว่า "กินเลย" ใช้ AI ตรวจสอบฉลากอาหาร ซึ่งอาจมีความคลาดเคลื่อน ไม่สามารถใช้ทดแทนคำวินิจฉัยทางการแพทย์ได้ และฉันจะตรวจสอบข้อมูลซ้ำด้วยตนเองก่อนตัดสินใจรับประทานอาหารที่มีความเสี่ยงสูง</span>
+            <span>ยอมรับ <a href="#" @click.prevent>ข้อกำหนดการใช้งาน</a> และ <a href="#" @click.prevent>นโยบายความเป็นส่วนตัว</a></span>
           </label>
 
           <button class="cta-btn" type="submit" :disabled="loading || !canSubmit">
-            <span v-if="!loading">บันทึกโปรไฟล์</span>
-            <span v-else class="loading-dots">กำลังบันทึกโปรไฟล์<i></i><i></i><i></i></span>
+            <span v-if="!loading">สร้างบัญชี</span>
+            <span v-else class="loading-dots">กำลังสร้างบัญชี<i></i><i></i><i></i></span>
           </button>
         </form>
 
@@ -92,7 +96,7 @@
       <div class="brand-dots"></div>
 
       <router-link to="/" class="brand-logo">
-        <div class="logo-mark">ก</div>
+        <div class="logo-mark"><img src="../assets/logo-mark.png" alt="กินเลย" /></div>
         <span>กินเลย</span>
       </router-link>
 
@@ -101,7 +105,7 @@
         <h1>รู้ทันทุก<br /><em>ส่วนประกอบ</em></h1>
 
         <ul class="feature-list">
-          <li><span class="check">✓</span>ตรวจสอบฉลากด้วย Gemini 3 Flash</li>
+          <li><span class="check">✓</span>วิเคราะห์ฉลากด้วย Gemini 3 Flash</li>
           <li><span class="check">✓</span>บันทึกประวัติการสแกนไม่จำกัด</li>
           <li><span class="check">✓</span>ปรับผลตามโปรไฟล์สุขภาพของคุณ</li>
           <li><span class="check">✓</span>ให้คำแนะนำแบบไม่ตัดสิน</li>
@@ -112,7 +116,7 @@
         <div class="mini-gauge" style="--pct: 94; --gcolor: #4f9271">
           <div class="mini-gauge-inner"><b>94%</b></div>
         </div>
-        <span class="mini-gauge-caption">ความแม่นยำเฉลี่ยของการตรวจสอบ</span>
+        <span class="mini-gauge-caption">ความแม่นยำเฉลี่ยของการวิเคราะห์</span>
       </div>
     </div>
   </div>
@@ -172,11 +176,11 @@ async function handleRegister() {
       displayName: `${firstName.value} ${lastName.value}`.trim(),
       deviceId: getDeviceId(),
     })
-    toast.value = 'บันทึกโปรไฟล์สำเร็จ'
+    toast.value = 'สมัครสมาชิกสำเร็จ'
     setTimeout(() => router.push('/'), 600)
   } catch (err) {
     toastIsError.value = true
-    toast.value = err.message || 'บันทึกโปรไฟล์ไม่สำเร็จ ลองใหม่อีกครั้ง'
+    toast.value = err.message || 'สมัครสมาชิกไม่สำเร็จ ลองใหม่อีกครั้ง'
   } finally {
     loading.value = false
   }
@@ -197,7 +201,7 @@ async function handleRegister() {
 /* Form side */
 .form-side { display: flex; flex-direction: column; min-height: 100vh; padding: 32px 40px; background: var(--bg); overflow-y: auto; }
 .form-topbar { display: flex; align-items: center; justify-content: space-between; }
-.form-center { flex: 1; display: flex; align-items: flex-start; justify-content: center; padding-top: 28px; }
+.form-center { flex: 1; display: flex; align-items: center; justify-content: center; }
 .back-link {
   display: flex; align-items: center; gap: 6px; color: var(--muted); text-decoration: none;
   font-size: 13.5px; font-weight: 600;
@@ -284,10 +288,12 @@ form { display: flex; flex-direction: column; gap: 15px; }
 }
 .brand-logo { position: relative; display: flex; align-items: center; gap: 10px; text-decoration: none; color: #fff; width: fit-content; }
 .brand-logo .logo-mark {
-  width: 38px; height: 38px; border-radius: 12px;
-  background: linear-gradient(155deg, var(--green) 0%, var(--green-deep) 130%);
-  display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 17px;
+  width: 42px; height: 42px; border-radius: 12px;
+  background: #fff; padding: 6px; box-sizing: border-box;
+  box-shadow: 0 4px 14px -4px rgba(0,0,0,0.35);
+  display: flex; align-items: center; justify-content: center;
 }
+.brand-logo .logo-mark img { width: 100%; height: 100%; object-fit: contain; }
 .brand-logo span { font-weight: 700; font-size: 17px; }
 
 .brand-copy { position: relative; }

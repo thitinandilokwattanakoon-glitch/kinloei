@@ -3,7 +3,7 @@
     <header class="topbar">
       <router-link to="/" class="brand">
         <span class="brand-leaf">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c-4 3-7 7-7 11a7 7 0 0 0 14 0c0-4-3-8-7-11z"/></svg>
+          <img src="./assets/logo-mark.png" alt="กินเลย" />
         </span>
         <span class="brand-text">
           <b>กินเลย</b>
@@ -11,8 +11,8 @@
         </span>
       </router-link>
 
-      <nav class="main-nav" v-if="loggedIn">
-        <router-link to="/" class="nav-link" exact-active-class="active" @click="onHomeClick">
+      <nav class="main-nav">
+        <router-link to="/" class="nav-link" exact-active-class="active">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h3v-6h6v6h3a1 1 0 0 0 1-1v-9"/></svg>
           <span>หน้าแรก</span>
         </router-link>
@@ -30,8 +30,15 @@
         </router-link>
       </nav>
 
-      <div class="topbar-actions" v-if="loggedIn">
-        <button class="icon-btn" aria-label="ออกจากระบบ" title="ออกจากระบบ" @click="handleLogout">
+      <div class="topbar-actions">
+        <button class="icon-btn" aria-label="การแจ้งเตือน">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>
+          <span class="dot"></span>
+        </button>
+        <button class="icon-btn" aria-label="ค้นหา">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        </button>
+        <button v-if="loggedIn" class="icon-btn" aria-label="ออกจากระบบ" title="ออกจากระบบ" @click="handleLogout">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
         </button>
       </div>
@@ -45,24 +52,16 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { isLoggedIn, logoutUser } from './lib/api.js'
-import { triggerScanReset } from './lib/scanReset.js'
 
 const router = useRouter()
-const route = useRoute()
 const loggedIn = ref(isLoggedIn())
 
 // เช็คสถานะล็อกอินใหม่ทุกครั้งที่เปลี่ยนหน้า (เช่น หลัง login/logout)
 router.afterEach(() => {
   loggedIn.value = isLoggedIn()
 })
-
-// กดปุ่ม "หน้าแรก" ทั้งที่อยู่หน้าแรก (= หน้าสแกน) อยู่แล้ว -> route ไม่เปลี่ยน ไม่ re-mount
-// ต้องยิงสัญญาณแยกไปบอก ScanView ให้เคลียร์ภาพ/ผลลัพธ์เก่า กลับไปเริ่มสแกนใหม่เอง
-function onHomeClick() {
-  if (route.path === '/') triggerScanReset()
-}
 
 function handleLogout() {
   logoutUser()
@@ -85,10 +84,10 @@ function handleLogout() {
 
 .brand { display: inline-flex; align-items: center; gap: 8px; margin-right: auto; }
 .brand-leaf {
-  width: 30px; height: 30px; color: var(--green);
+  width: 32px; height: 32px;
   display: flex; align-items: center; justify-content: center;
 }
-.brand-leaf svg { width: 24px; height: 24px; }
+.brand-leaf img { width: 32px; height: 32px; object-fit: contain; }
 .brand-text { display: flex; flex-direction: column; line-height: 1.2; }
 .brand-text b { font-size: 17px; color: var(--orange); }
 .brand-text em {
@@ -114,6 +113,10 @@ function handleLogout() {
   display: flex; align-items: center; justify-content: center; cursor: pointer;
 }
 .icon-btn svg { width: 17px; height: 17px; }
+.icon-btn .dot {
+  position: absolute; top: 7px; right: 7px; width: 7px; height: 7px;
+  border-radius: 50%; background: var(--red); border: 1.5px solid var(--white);
+}
 .icon-btn[aria-label="ออกจากระบบ"]:hover { background: var(--red); color: #fff; }
 
 .app-main { flex: 1; }
