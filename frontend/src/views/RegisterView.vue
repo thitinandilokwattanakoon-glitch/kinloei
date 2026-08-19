@@ -71,7 +71,7 @@
 
           <label class="checkbox terms">
             <input type="checkbox" v-model="agree" required />
-            <span>ฉันเข้าใจว่า "กินเลย" ใช้ AI วิเคราะห์ฉลากอาหาร ซึ่งอาจมีความคลาดเคลื่อน ไม่สามารถใช้ทดแทนคำวินิจฉัยทางการแพทย์ได้ และฉันจะตรวจสอบข้อมูลซ้ำด้วยตนเองก่อนตัดสินใจรับประทานอาหารที่มีความเสี่ยงสูง</span>
+            <span>ฉันเข้าใจว่า "กินเลย" ใช้ AI ตรวจสอบฉลากอาหาร ซึ่งอาจมีความคลาดเคลื่อน ไม่สามารถใช้ทดแทนคำวินิจฉัยทางการแพทย์ได้ และฉันจะตรวจสอบข้อมูลซ้ำด้วยตนเองก่อนตัดสินใจรับประทานอาหารที่มีความเสี่ยงสูง</span>
           </label>
 
           <button class="cta-btn" type="submit" :disabled="loading || !canSubmit">
@@ -101,7 +101,7 @@
         <h1>รู้ทันทุก<br /><em>ส่วนประกอบ</em></h1>
 
         <ul class="feature-list">
-          <li><span class="check">✓</span>วิเคราะห์ฉลากด้วย Gemini 3 Flash</li>
+          <li><span class="check">✓</span>ตรวจสอบฉลากด้วย Gemini 3 Flash</li>
           <li><span class="check">✓</span>บันทึกประวัติการสแกนไม่จำกัด</li>
           <li><span class="check">✓</span>ปรับผลตามโปรไฟล์สุขภาพของคุณ</li>
           <li><span class="check">✓</span>ให้คำแนะนำแบบไม่ตัดสิน</li>
@@ -112,7 +112,7 @@
         <div class="mini-gauge" style="--pct: 94; --gcolor: #4f9271">
           <div class="mini-gauge-inner"><b>94%</b></div>
         </div>
-        <span class="mini-gauge-caption">ความแม่นยำเฉลี่ยของการวิเคราะห์</span>
+        <span class="mini-gauge-caption">ความแม่นยำเฉลี่ยของการตรวจสอบ</span>
       </div>
     </div>
   </div>

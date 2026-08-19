@@ -3,7 +3,7 @@
     <div class="intro">
       <span class="eyebrow">SCAN LOG</span>
       <h1>ประวัติการสแกน</h1>
-      <p>ผลการวิเคราะห์ย้อนหลังทั้งหมดของคุณ เรียงจากล่าสุด</p>
+      <p>ผลการตรวจสอบย้อนหลังทั้งหมดของคุณ เรียงจากล่าสุด</p>
     </div>
 
     <div v-if="loading" class="state-box">กำลังโหลดประวัติ...</div>
@@ -15,7 +15,7 @@
 
     <div v-else-if="!scans.length" class="state-box">
       ยังไม่มีประวัติการสแกน
-      <router-link to="/scan" class="inline-link">เริ่มสแกนเลย</router-link>
+      <router-link to="/" class="inline-link">เริ่มสแกนเลย</router-link>
     </div>
 
     <ul v-else class="scan-list">

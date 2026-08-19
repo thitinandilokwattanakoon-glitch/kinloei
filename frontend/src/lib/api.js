@@ -108,7 +108,7 @@ export async function changePassword({ currentPassword, newPassword }) {
 // ---------------------------------------------------------------------------
 
 /**
- * วิเคราะห์ภาพ/ข้อความอาหาร
+ * ตรวจสอบภาพ/ข้อความอาหาร
  * @param {Object} params
  * @param {Blob|null} params.imageBlob - รูปที่ถ่าย/เลือก (ไม่บังคับถ้ามี textInput)
  * @param {string} [params.textInput] - ข้อความเพิ่มเติม (ไม่บังคับถ้ามีรูป)
