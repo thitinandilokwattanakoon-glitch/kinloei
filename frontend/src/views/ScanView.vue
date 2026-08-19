@@ -549,7 +549,12 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.scan-page { max-width: 520px; margin: 0 auto; padding: 28px 20px 20px; }
+.scan-page { position: relative; z-index: 0; max-width: 520px; margin: 0 auto; padding: 28px 20px 20px; min-height: 100vh; }
+.scan-page::before {
+  content: ""; position: absolute; top: 0; bottom: 0; left: 50%; width: 100vw;
+  transform: translateX(-50%); z-index: -1;
+  background: linear-gradient(135deg, #E7A459 0%, #70AF7A 50%, #70D3D4 100%);
+}
 
 /* --- เลย์เอาต์คอลัมน์เดียว จัดกึ่งกลาง: ตอนถ่าย/เลือกรูป โชว์แค่การ์ดถ่ายรูป
    พอวิเคราะห์เสร็จ การ์ดถ่ายรูปหายไป โชว์แค่การ์ดผลลัพธ์แทน (ไม่แบ่ง 2 คอลัมน์อีกต่อไป) --- */
@@ -567,7 +572,7 @@ onBeforeUnmount(() => {
 
 .back-link {
   display: inline-flex; align-items: center; gap: 5px;
-  font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 16px;
+  font-size: 13px; font-weight: 600; color: #111; margin-bottom: 16px;
 }
 .back-link svg { width: 15px; height: 15px; }
 .back-link:hover { color: var(--ink); }
@@ -575,11 +580,15 @@ onBeforeUnmount(() => {
 .intro { margin-bottom: 20px; }
 .eyebrow {
   font-family: var(--font-mono); font-size: 11px; font-weight: 600;
-  color: var(--green); letter-spacing: 0.08em;
+  color: #111; letter-spacing: 0.08em;
 }
-.intro h1 { font-size: 26px; margin: 8px 0 6px; line-height: 1.3; }
-.intro h1 em { font-style: normal; color: var(--green); }
-.intro p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.5; }
+.intro h1 {
+  font-size: 26px; margin: 8px 0 6px; line-height: 1.3; color: #111;
+}
+.intro h1 em { font-style: normal; color: #111; }
+.intro p {
+  margin: 0; color: #111; font-size: 14px; line-height: 1.5;
+}
 
 .stage { position: relative; }
 .stage-card {
