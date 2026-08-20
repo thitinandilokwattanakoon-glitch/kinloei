@@ -1,9 +1,10 @@
 <template>
   <div class="scan-page">
-    <router-link to="/" class="back-link">
+    <div v-if="verdictKey" class="verdict-fullscreen-bg" :class="`bg-${verdictKey}`"></div>
+    <button v-if="result" type="button" class="back-link" @click="retake">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-      กลับหน้าแรก
-    </router-link>
+      สแกนใหม่
+    </button>
 
     <div class="layout-grid">
     <div class="capture-col" v-if="!result">
@@ -102,7 +103,7 @@
       @click="analyzeImage"
     >
       <span v-if="analyzing">กำลังส่งตรวจสอบ...</span>
-      <span v-else>ตรวจสอบภาพ</span>
+      <span v-else>ตรวจสอบก่อนกิน</span>
     </button>
     <p v-if="analyzeNote" class="analyze-note error">{{ analyzeNote }}</p>
 
@@ -528,6 +529,9 @@ async function analyzeImage() {
 
 const verdict = computed(() => (result.value ? getVerdict(result.value.status) : null))
 
+// key ของสถานะ (green/amber/red) ใช้ทาสีพื้นหลังทั้งจอให้เด่นชัดหลังตรวจสอบเสร็จ
+const verdictKey = computed(() => (result.value ? statusToVerdictKey(result.value.status) : null))
+
 // ไอคอนใหญ่บนรูปสินค้า (safe / caution / danger) — อิงจาก status จริงที่ backend ส่งมา (SAFE/CAUTION/AVOID)
 // โดยตรง ไม่เดาจากคำในข้อความ eyebrow อีกต่อไป (เดิมเดาผิดตอน eyebrow เป็น "FLAG" ซึ่งไม่ตรงกับ
 // AVOID/DANGER ที่เช็คไว้ เลยได้ไอคอนสามเหลี่ยม caution ทั้งที่สถานะจริงคือ AVOID สีแดง)
@@ -565,12 +569,26 @@ watch(scanResetSignal, () => {
 </script>
 
 <style scoped>
-.scan-page { position: relative; z-index: 0; max-width: 520px; margin: 0 auto; padding: 28px 20px 20px; min-height: 100vh; }
-.scan-page::before {
-  content: ""; position: absolute; top: 0; bottom: 0; left: 50%; width: 100vw;
-  transform: translateX(-50%); z-index: -1;
-  background: linear-gradient(135deg, #E7A459 0%, #70AF7A 50%, #70D3D4 100%);
+.scan-page { max-width: 520px; margin: 0 auto; padding: 28px 20px 20px; position: relative; }
+
+/* ===== พื้นหลังทั้งจอตามสถานะผลตรวจสอบ — เขียว/เหลือง/แดง เด่นชัดทันทีที่เห็น ===== */
+.verdict-fullscreen-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  animation: verdict-bg-in 0.4s ease both;
 }
+.verdict-fullscreen-bg.bg-green {
+  background: linear-gradient(180deg, #eaf6ef 0%, #cdeada 55%, #a9dcc0 100%);
+}
+.verdict-fullscreen-bg.bg-amber {
+  background: linear-gradient(180deg, #fff3e0 0%, #ffe0ad 55%, #f7c778 100%);
+}
+.verdict-fullscreen-bg.bg-red {
+  background: linear-gradient(180deg, #fdeae7 0%, #f8c9c1 55%, #efa198 100%);
+}
+@keyframes verdict-bg-in { from { opacity: 0; } to { opacity: 1; } }
 
 /* --- เลย์เอาต์คอลัมน์เดียว จัดกึ่งกลาง: ตอนถ่าย/เลือกรูป โชว์แค่การ์ดถ่ายรูป
    พอตรวจสอบเสร็จ การ์ดถ่ายรูปหายไป โชว์แค่การ์ดผลลัพธ์แทน (ไม่แบ่ง 2 คอลัมน์อีกต่อไป) --- */
@@ -588,7 +606,8 @@ watch(scanResetSignal, () => {
 
 .back-link {
   display: inline-flex; align-items: center; gap: 5px;
-  font-size: 13px; font-weight: 600; color: #111; margin-bottom: 16px;
+  font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 16px;
+  background: none; border: none; padding: 0; cursor: pointer; font-family: inherit;
 }
 .back-link svg { width: 15px; height: 15px; }
 .back-link:hover { color: var(--ink); }
@@ -596,15 +615,11 @@ watch(scanResetSignal, () => {
 .intro { margin-bottom: 20px; }
 .eyebrow {
   font-family: var(--font-mono); font-size: 11px; font-weight: 600;
-  color: #111; letter-spacing: 0.08em;
+  color: var(--green); letter-spacing: 0.08em;
 }
-.intro h1 {
-  font-size: 26px; margin: 8px 0 6px; line-height: 1.3; color: #111;
-}
-.intro h1 em { font-style: normal; color: #111; }
-.intro p {
-  margin: 0; color: #111; font-size: 14px; line-height: 1.5;
-}
+.intro h1 { font-size: 26px; margin: 8px 0 6px; line-height: 1.3; }
+.intro h1 em { font-style: normal; color: var(--green); }
+.intro p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.5; }
 
 .stage { position: relative; }
 .stage-card {

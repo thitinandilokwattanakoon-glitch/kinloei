@@ -4,7 +4,7 @@
     <div class="blob blob-b"></div>
 
     <router-link to="/" class="top-logo">
-      <div class="logo-mark"><img src="../assets/logo-mark.png" alt="กินเลย" /></div>
+      <div class="logo-mark">ก</div>
       <span>กินเลย</span>
     </router-link>
 
@@ -129,12 +129,10 @@ onBeforeUnmount(() => clearInterval(cooldownTimer))
   text-decoration: none; color: var(--ink); margin-bottom: 48px;
 }
 .top-logo .logo-mark {
-  width: 40px; height: 40px; border-radius: 11px;
-  background: #fff; padding: 6px; box-sizing: border-box;
-  box-shadow: 0 4px 14px -4px rgba(0,0,0,0.2);
-  display: flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 11px;
+  background: linear-gradient(155deg, var(--green) 0%, var(--green-deep) 130%);
+  color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px;
 }
-.top-logo .logo-mark img { width: 100%; height: 100%; object-fit: contain; }
 .top-logo span { font-weight: 700; font-size: 17px; }
 
 .reset-card {

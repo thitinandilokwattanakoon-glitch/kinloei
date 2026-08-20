@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import ScanView from '../views/ScanView.vue'
-import HistoryView from '../views/HistoryView.vue'
 import ProfileView from '../views/ProfileView.vue'
 import TipsView from '../views/TipsView.vue'
 import LoginView from '../views/LoginView.vue'
@@ -18,7 +17,6 @@ const router = createRouter({
     { path: '/', name: 'home', component: ScanView, meta: { requiresAuth: true } },
     // เผื่อลิงก์/บุ๊กมาร์กเก่าที่ยังชี้ไป /scan — ส่งกลับไปหน้าแรกแทน
     { path: '/scan', redirect: '/' },
-    { path: '/history', name: 'history', component: HistoryView, meta: { requiresAuth: true } },
     { path: '/profile', name: 'profile', component: ProfileView, meta: { requiresAuth: true } },
     { path: '/tips', name: 'tips', component: TipsView, meta: { requiresAuth: true } },
     { path: '/login', name: 'login', component: LoginView },

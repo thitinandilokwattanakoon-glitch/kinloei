@@ -102,26 +102,6 @@
         <textarea v-model="notes" rows="3" placeholder="เช่น แพ้กุ้งรุนแรงมาก ระวังเป็นพิเศษ"></textarea>
       </section>
 
-      <!-- จำกัดสารอาหารต่อวัน -->
-      <section class="field-group">
-        <label>จำกัดสารอาหารต่อวัน</label>
-        <div v-if="nutrientLimits.length" class="nutrient-list">
-          <div v-for="(item, i) in nutrientLimits" :key="i" class="nutrient-row">
-            <input type="checkbox" v-model="item.enabled" />
-            <span class="nutrient-label">{{ item.label }}</span>
-            <span class="nutrient-max">≤ {{ item.max }} {{ item.unit }}/วัน</span>
-            <button type="button" class="chip-x" @click="nutrientLimits.splice(i, 1)">✕</button>
-          </div>
-        </div>
-
-        <div class="nutrient-add">
-          <input v-model="newNutrient.label" type="text" placeholder="ชื่อสาร เช่น โซเดียม" />
-          <input v-model.number="newNutrient.max" type="number" min="0" placeholder="ค่าสูงสุด" />
-          <input v-model="newNutrient.unit" type="text" placeholder="หน่วย เช่น mg" />
-          <button type="button" class="btn-ghost-add" @click="addNutrientLimit">+ เพิ่ม</button>
-        </div>
-      </section>
-
       <button class="save-btn" type="submit" :disabled="saving">
         <span v-if="!saving">บันทึกโปรไฟล์</span>
         <span v-else>กำลังบันทึก...</span>
@@ -232,12 +212,10 @@ const conditions = ref([])
 const allergies = ref([])
 const avoidIngredients = ref([])
 const notes = ref('')
-const nutrientLimits = ref([]) // { key, label, max, unit, enabled }
 
 const conditionInput = ref('')
 const allergyInput = ref('')
 const avoidInput = ref('')
-const newNutrient = ref({ label: '', max: null, unit: 'mg' })
 
 // map ของ ref แต่ละอัน เพื่อให้ addTag เคลียร์ input ที่ถูกต้องได้
 const inputRefs = { conditionInput, allergyInput, avoidInput }
@@ -249,19 +227,6 @@ function addTag(list, inputKey) {
   inputRef.value = ''
 }
 
-function addNutrientLimit() {
-  const { label, max, unit } = newNutrient.value
-  if (!label?.trim() || !max || max <= 0) return
-  nutrientLimits.value.push({
-    key: label.trim().toLowerCase().replace(/\s+/g, '_'),
-    label: label.trim(),
-    max,
-    unit: unit?.trim() || 'mg',
-    enabled: true,
-  })
-  newNutrient.value = { label: '', max: null, unit: 'mg' }
-}
-
 async function loadProfile() {
   loading.value = true
   try {
@@ -270,7 +235,6 @@ async function loadProfile() {
     allergies.value = profile.allergies || []
     avoidIngredients.value = profile.avoid_ingredients || []
     notes.value = profile.notes || ''
-    nutrientLimits.value = profile.nutrient_limits || []
   } catch (err) {
     toastIsError.value = true
     toast.value = err.message || 'โหลดโปรไฟล์ไม่สำเร็จ'
@@ -289,7 +253,7 @@ async function save() {
       allergies: allergies.value,
       avoid_ingredients: avoidIngredients.value,
       notes: notes.value,
-      nutrient_limits: nutrientLimits.value,
+      nutrient_limits: [], // เอาฟีเจอร์นี้ออกจาก UI แล้ว ส่ง [] ไว้เผื่อ backend schema ยังคาด field นี้อยู่
     })
     toast.value = 'บันทึกโปรไฟล์เรียบร้อยแล้ว'
   } catch (err) {
@@ -308,24 +272,15 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.profile-page { position: relative; z-index: 0; max-width: 560px; margin: 0 auto; padding: 28px 20px 80px; min-height: 100vh; }
-.profile-page::before {
-  content: ""; position: absolute; top: 0; bottom: 0; left: 50%; width: 100vw;
-  transform: translateX(-50%); z-index: -1;
-  background: linear-gradient(135deg, #E7A459 0%, #70AF7A 50%, #70D3D4 100%);
-}
+.profile-page { max-width: 560px; margin: 0 auto; padding: 28px 20px 80px; }
 
 .intro { margin-bottom: 22px; }
 .eyebrow {
   font-family: var(--font-mono); font-size: 11px; font-weight: 600;
-  color: #111; letter-spacing: 0.08em;
+  color: var(--green); letter-spacing: 0.08em;
 }
-.intro h1 {
-  font-size: 24px; margin: 8px 0 6px; color: #111;
-}
-.intro p {
-  margin: 0; color: #111; font-size: 14px; line-height: 1.5;
-}
+.intro h1 { font-size: 24px; margin: 8px 0 6px; }
+.intro p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.5; }
 
 .state-box {
   text-align: center; padding: 40px 20px; color: var(--muted); font-size: 14px;
@@ -365,23 +320,6 @@ textarea {
 }
 textarea:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 3px rgba(79, 146, 113, 0.15); }
 
-.nutrient-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
-.nutrient-row {
-  display: flex; align-items: center; gap: 10px; font-size: 13px;
-  padding: 8px 10px; border-radius: 10px; background: var(--bg);
-}
-.nutrient-row input[type="checkbox"] { accent-color: var(--green); width: 15px; height: 15px; flex-shrink: 0; }
-.nutrient-label { font-weight: 600; flex: 1; }
-.nutrient-max { color: var(--muted); font-size: 12.5px; }
-
-.nutrient-add { display: flex; gap: 8px; flex-wrap: wrap; }
-.nutrient-add input {
-  border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; font-size: 13px;
-  font-family: inherit; background: var(--paper); color: var(--ink);
-}
-.nutrient-add input:nth-child(1) { flex: 2; min-width: 120px; }
-.nutrient-add input:nth-child(2) { flex: 1; min-width: 80px; }
-.nutrient-add input:nth-child(3) { flex: 1; min-width: 70px; }
 .btn-ghost-add {
   border: 1px dashed var(--green); background: none; color: var(--green-deep);
   border-radius: 10px; padding: 8px 14px; font-size: 12.5px; font-weight: 700; cursor: pointer;

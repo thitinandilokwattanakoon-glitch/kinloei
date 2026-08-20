@@ -1,3 +1,4 @@
+
 <template>
   <div class="history-page">
     <div class="intro">

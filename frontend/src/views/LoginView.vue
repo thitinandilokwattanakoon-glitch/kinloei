@@ -1,43 +1,21 @@
 <template>
   <div class="auth-shell">
+    <div class="bg-dots"></div>
+    <div class="scan-line"></div>
 
-    <!-- Brand side -->
-    <div class="brand-side">
-      <div class="brand-dots"></div>
-      <div class="scan-line"></div>
-
+    <header class="top-bar">
       <router-link to="/" class="brand-logo">
-        <div class="logo-mark"><img src="../assets/logo-mark.png" alt="กินเลย" /></div>
-        <span>กินเลย</span>
+        <img src="../assets/logo-full.png" alt="Kinloei" class="logo-full-img" />
       </router-link>
+    </header>
 
-      <div class="brand-copy">
-        <span class="brand-eyebrow">แอปพลิเคชั่นวิเคราะห์ความเสี่ยงของอาหารจาก
-ฉลากบนบรรจุภัณฑ์</span>
-        <h1>ถ่ายรูป<br />ก่อน<em>กินเลย</em></h1>
-      </div>
-
-      <div class="brand-badge">
-        <div class="badge-dot"></div>
-        <span>Power by GEMINI 3.6 FLASH</span>
-      </div>
-    </div>
-
-    <!-- Form side -->
-    <div class="form-side">
-      <div class="form-topbar">
-        
-        <router-link to="/register" class="form-topbar-link">ยังไม่มีบัญชี? สมัครสมาชิก</router-link>
-      </div>
-
-      <div class="form-center">
+    <main class="auth-main">
       <div class="form-card">
-        <span class="pill">
+        <span class="eyebrow-pill">
           <span class="pill-dot"></span>
-          เข้าสู่ระบบ
+          แอปพลิเคชันตรวจสอบความเสี่ยงของอาหารจากฉลากบนบรรจุภัณฑ์
         </span>
-        <h2>ยินดีต้อนรับกลับมา</h2>
-        <p class="form-sub">กรอกข้อมูลเพื่อเข้าใช้งานบัญชีของคุณ</p>
+
 
         <form @submit.prevent="handleLogin">
           <div class="field">
@@ -74,12 +52,20 @@
           </button>
         </form>
 
+        <router-link to="/register" class="signup-link">ยังไม่มีบัญชี? สร้างโปรไฟล์ใหม่</router-link>
+
         <Transition name="fade">
           <div class="toast" :class="{ 'toast-error': toastIsError }" v-if="toast">{{ toast }}</div>
         </Transition>
       </div>
+    </main>
+
+    <footer class="bottom-bar">
+      <div class="brand-badge">
+        <div class="badge-dot"></div>
+        <span>Power by GEMINI 3 FLASH</span>
       </div>
-    </div>
+    </footer>
   </div>
 </template>
 
@@ -120,134 +106,100 @@ async function handleLogin() {
 
 <style scoped>
 .auth-shell {
-  display: grid;
-  grid-template-columns: minmax(320px, 36%) 1fr;
-  min-height: 100vh;
-}
-@media (max-width: 900px) {
-  .auth-shell { grid-template-columns: 1fr; }
-
-  .brand-side {
-    display: flex;
-    padding: 28px 24px 22px;
-  }
-  .brand-logo .logo-mark { width: 64px; height: 64px; border-radius: 16px; }
-  .brand-logo span { font-size: 20px; }
-  .brand-copy h1 { font-size: clamp(26px, 7vw, 34px); margin-bottom: 12px; }
-  .brand-eyebrow { margin-bottom: 10px; font-size: 11px; }
-
-  .form-side { padding: 20px 20px 32px; }
-  .form-center { align-items: flex-start; justify-content: flex-start; }
-  .form-card { margin: 16px 0 0; }
-}
-
-/* Brand side */
-.brand-side {
   position: relative;
-  background: var(--dark);
-  color: #fff;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  padding: 44px 52px;
+  background: var(--dark);
+  color: #fff;
   overflow: hidden;
 }
-.brand-dots {
-  position: absolute; inset: 0; pointer-events: none; opacity: 0.5;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
-  background-size: 20px 20px;
+
+.bg-dots {
+  position: absolute; inset: 0; pointer-events: none; opacity: 0.5; z-index: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+  background-size: 22px 22px;
 }
 .scan-line {
-  position: absolute; left: 0; right: 0; height: 2px;
+  position: absolute; left: 0; right: 0; height: 1.5px; z-index: 0;
   background: linear-gradient(90deg, transparent, var(--green) 20%, #dcefe0 50%, var(--green) 80%, transparent);
-  box-shadow: 0 0 16px 2px rgba(79, 146, 113, 0.6);
-  animation: scan 3.2s ease-in-out infinite;
+  box-shadow: 0 0 20px 2px rgba(79, 146, 113, 0.45);
+  animation: scan 4.4s ease-in-out infinite;
 }
 @keyframes scan {
-  0% { top: 8%; opacity: 0.15; }
-  50% { top: 92%; opacity: 0.9; }
-  100% { top: 8%; opacity: 0.15; }
+  0% { top: 6%; opacity: 0.12; }
+  50% { top: 94%; opacity: 0.7; }
+  100% { top: 6%; opacity: 0.12; }
 }
 
-.brand-logo { position: relative; display: flex; align-items: center; gap: 10px; text-decoration: none; color: #fff; width: fit-content; }
-.brand-logo .logo-mark {
-  width: 42px; height: 42px; border-radius: 12px;
-  background: #fff; padding: 6px; box-sizing: border-box;
-  box-shadow: 0 4px 14px -4px rgba(0,0,0,0.35);
+/* Top bar */
+.top-bar {
+  position: relative; z-index: 2;
+  padding: 28px 40px 0;
+}
+.brand-logo { display: inline-flex; align-items: center; text-decoration: none; color: #fff; width: fit-content; }
+.brand-logo .logo-full-img { height: 44px; width: auto; object-fit: contain; display: block; }
+
+/* Center card */
+.auth-main {
+  position: relative; z-index: 2;
+  flex: 1;
   display: flex; align-items: center; justify-content: center;
+  padding: 32px 20px;
 }
-.brand-logo .logo-mark img { width: 100%; height: 100%; object-fit: contain; }
-.brand-logo span { font-weight: 700; font-size: 17px; }
 
-.brand-copy { position: relative; }
-.brand-eyebrow {
-  font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; font-weight: 700;
-   color: var(--green); display: block; margin-bottom: 16px;
+.form-card {
+  max-width: 420px; width: 100%;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 22px;
+  padding: 38px 34px 30px;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45);
+  position: relative;
 }
-.brand-copy h1 { font-size: clamp(34px, 4.4vw, 52px); line-height: 1.15; font-weight: 700; margin: 0 0 18px; }
-.brand-copy h1 em {
-  font-style: normal;
-  background: linear-gradient(100deg, var(--green) 10%, #dcefe0 90%);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
+.form-card::before {
+  content: ''; position: absolute; top: 0; left: 22px; right: 22px; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(79, 146, 113, 0.7), transparent);
 }
-.brand-copy p { font-size: 15px; color: #9aa79c; max-width: 380px; line-height: 1.7; }
 
-.brand-badge {
-  position: relative; display: inline-flex; align-items: center; gap: 8px; width: fit-content;
-  font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.08em; color: #9aa79c;
-  border: 1px solid rgba(255, 255, 255, 0.14); padding: 8px 14px; border-radius: 999px;
-}
-.badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 3px rgba(79, 146, 113, 0.3); animation: pulse-dot 1.4s ease-in-out infinite; }
-@keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-
-/* Form side */
-.form-side { display: flex; flex-direction: column; min-height: 100vh; padding: 32px 40px; background: var(--bg); overflow-y: auto; }
-.form-topbar { display: flex; align-items: center; justify-content: space-between; }
-.form-center { flex: 1; display: flex; align-items: center; justify-content: center; }
-.back-link {
-  display: flex; align-items: center; gap: 6px; color: var(--muted); text-decoration: none;
-  font-size: 13.5px; font-weight: 600;
-}
-.back-link svg { width: 15px; height: 15px; }
-.back-link:hover { color: var(--ink); }
-.form-topbar-link { font-size: 13px; color: var(--green-deep); font-weight: 600; text-decoration: none; }
-.form-topbar-link:hover { text-decoration: underline; }
-
-.form-card { max-width: 400px; width: 100%; margin: 32px 0; position: relative; }
-.form-card .pill {
+.eyebrow-pill {
   display: inline-flex; align-items: center; gap: 8px;
-  border: 1px solid rgba(52, 105, 78, 0.22); background: rgba(79, 146, 113, 0.08);
-  color: var(--green-deep); font-family: 'IBM Plex Mono', monospace;
-  font-weight: 600; font-size: 11px; letter-spacing: 0.06em;
-  padding: 6px 13px; border-radius: 999px; margin-bottom: 18px;
+  border: 1px solid rgba(79, 146, 113, 0.3); background: rgba(79, 146, 113, 0.1);
+  color: #a8d9bb; font-family: 'IBM Plex Mono', monospace;
+  font-weight: 600; font-size: 10.5px; letter-spacing: 0.03em; line-height: 1.5;
+  padding: 7px 13px; border-radius: 999px; margin-bottom: 22px; max-width: 100%;
 }
-.form-card .pill-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
-.form-card h2 { font-size: 26px; font-weight: 700; color: var(--ink); margin: 0 0 6px; }
-.form-sub { color: var(--muted); font-size: 14px; margin: 0 0 28px; }
+.eyebrow-pill .pill-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+
+.form-card h2 { font-size: 25px; font-weight: 700; color: #fff; margin: 0 0 6px; }
+.form-sub { color: #9aa79c; font-size: 14px; margin: 0 0 26px; }
 
 form { display: flex; flex-direction: column; gap: 16px; }
 .field { display: flex; flex-direction: column; gap: 6px; }
-.field label { font-size: 12.5px; font-weight: 600; color: var(--muted); }
+.field label { font-size: 12.5px; font-weight: 600; color: #9aa79c; }
 .field input {
-  width: 100%; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;
-  font-size: 14px; font-family: inherit; color: var(--ink); background: var(--paper);
+  width: 100%; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 12px; padding: 12px 14px;
+  font-size: 14px; font-family: inherit; color: #fff; background: rgba(255, 255, 255, 0.06);
   transition: border-color 0.15s, box-shadow 0.15s;
 }
-.field input:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 3px rgba(79, 146, 113, 0.15); }
+.field input::placeholder { color: #6b756c; }
+.field input:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 3px rgba(79, 146, 113, 0.25); }
 
 .password-row { display: flex; align-items: center; gap: 8px; }
 .password-row input { flex: 1; }
 .eye-btn {
-  flex-shrink: 0; width: 42px; height: 42px; border-radius: 10px; border: 1px solid var(--line);
-  background: var(--paper); color: var(--muted); display: flex; align-items: center; justify-content: center; cursor: pointer;
+  flex-shrink: 0; width: 42px; height: 42px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06); color: #9aa79c; display: flex; align-items: center; justify-content: center; cursor: pointer;
 }
 .eye-btn svg { width: 17px; height: 17px; }
-.eye-btn:hover { color: var(--green-deep); border-color: var(--green); }
+.eye-btn:hover { color: #fff; border-color: var(--green); }
 
 .field-row { display: flex; align-items: center; justify-content: space-between; }
-.checkbox { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--muted); cursor: pointer; }
+.checkbox { display: flex; align-items: center; gap: 7px; font-size: 13px; color: #9aa79c; cursor: pointer; }
 .checkbox input { accent-color: var(--green); width: 15px; height: 15px; }
-.link-btn { font-size: 13px; color: var(--green-deep); font-weight: 600; text-decoration: none; }
+.link-btn { font-size: 13px; color: var(--green); font-weight: 600; text-decoration: none; }
 .link-btn:hover { text-decoration: underline; }
 
 .cta-btn {
@@ -258,6 +210,12 @@ form { display: flex; flex-direction: column; gap: 16px; }
 .cta-btn:hover:not(:disabled) { background: var(--green-deep); transform: translateY(-1px); }
 .cta-btn:disabled { opacity: 0.75; cursor: not-allowed; }
 
+.signup-link {
+  display: block; text-align: center; margin-top: 18px;
+  font-size: 13px; color: #9aa79c; text-decoration: none;
+}
+.signup-link:hover { color: #fff; text-decoration: underline; }
+
 .loading-dots i { width: 4px; height: 4px; background: #fff; border-radius: 50%; display: inline-block; margin-left: 3px; animation: blink-dot 1.2s infinite; }
 .loading-dots i:nth-child(2) { animation-delay: 0.2s; }
 .loading-dots i:nth-child(3) { animation-delay: 0.4s; }
@@ -265,10 +223,30 @@ form { display: flex; flex-direction: column; gap: 16px; }
 
 .toast {
   position: fixed; left: 50%; bottom: 30px; transform: translateX(-50%);
-  background: var(--dark); color: #fff; font-size: 13px; font-weight: 600;
-  padding: 10px 20px; border-radius: 999px; box-shadow: 0 10px 26px rgba(0, 0, 0, 0.25); z-index: 40;
+  background: #fff; color: var(--dark); font-size: 13px; font-weight: 600;
+  padding: 10px 20px; border-radius: 999px; box-shadow: 0 10px 26px rgba(0, 0, 0, 0.35); z-index: 40;
 }
-.toast.toast-error { background: var(--red); }
+.toast.toast-error { background: var(--red); color: #fff; }
 .fade-enter-active, .fade-leave-active { transition: opacity 0.25s ease; }
 .fade-enter-from, .fade-leave-to { opacity: 0; }
-</style>
+
+/* Bottom bar */
+.bottom-bar {
+  position: relative; z-index: 2;
+  display: flex; justify-content: center;
+  padding: 0 20px 26px;
+}
+.brand-badge {
+  display: inline-flex; align-items: center; gap: 8px; width: fit-content;
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.08em; color: #9aa79c;
+  border: 1px solid rgba(255, 255, 255, 0.14); padding: 8px 14px; border-radius: 999px;
+  background: rgba(255, 255, 255, 0.02);
+}
+.badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 3px rgba(79, 146, 113, 0.3); animation: pulse-dot 1.4s ease-in-out infinite; }
+@keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+@media (max-width: 480px) {
+  .top-bar { padding: 22px 20px 0; }
+  .form-card { padding: 30px 22px 24px; border-radius: 18px; }
+}
+</style>  
