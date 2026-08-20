@@ -74,15 +74,24 @@ onMounted(load)
 </script>
 
 <style scoped>
-.history-page { max-width: 560px; margin: 0 auto; padding: 28px 20px 60px; }
+.history-page { position: relative; z-index: 0; max-width: 560px; margin: 0 auto; padding: 28px 20px 60px; min-height: 100vh; }
+.history-page::before {
+  content: ""; position: absolute; top: 0; bottom: 0; left: 50%; width: 100vw;
+  transform: translateX(-50%); z-index: -1;
+  background: linear-gradient(135deg, #E7A459 0%, #70AF7A 50%, #70D3D4 100%);
+}
 
 .intro { margin-bottom: 20px; }
 .eyebrow {
   font-family: var(--font-mono); font-size: 11px; font-weight: 600;
-  color: var(--green); letter-spacing: 0.08em;
+  color: #111; letter-spacing: 0.08em;
 }
-.intro h1 { font-size: 24px; margin: 8px 0 6px; }
-.intro p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.5; }
+.intro h1 {
+  font-size: 24px; margin: 8px 0 6px; color: #111;
+}
+.intro p {
+  margin: 0; color: #111; font-size: 14px; line-height: 1.5;
+}
 
 .state-box {
   text-align: center; padding: 40px 20px; color: var(--muted); font-size: 14px;

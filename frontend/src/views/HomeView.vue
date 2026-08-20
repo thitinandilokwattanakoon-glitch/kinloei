@@ -162,7 +162,12 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.home-page { max-width: 1080px; margin: 0 auto; padding: 28px 24px 60px; }
+.home-page { position: relative; z-index: 0; max-width: 1080px; margin: 0 auto; padding: 28px 24px 60px; min-height: 100vh; }
+.home-page::before {
+  content: ""; position: absolute; top: 0; bottom: 0; left: 50%; width: 100vw;
+  transform: translateX(-50%); z-index: -1;
+  background: linear-gradient(135deg, #E7A459 0%, #70AF7A 50%, #70D3D4 100%);
+}
 
 .home-grid {
   display: grid;
