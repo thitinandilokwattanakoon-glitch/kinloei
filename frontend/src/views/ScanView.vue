@@ -101,14 +101,14 @@
       :disabled="mode !== 'preview' || analyzing"
       @click="analyzeImage"
     >
-      <span v-if="analyzing">กำลังส่งวิเคราะห์...</span>
-      <span v-else>วิเคราะห์ภาพ</span>
+      <span v-if="analyzing">กำลังส่งตรวจสอบ...</span>
+      <span v-else>ตรวจสอบภาพ</span>
     </button>
     <p v-if="analyzeNote" class="analyze-note error">{{ analyzeNote }}</p>
 
     </div><!-- /.capture-col -->
 
-    <!-- ผลลัพธ์วิเคราะห์แบบมีโครงสร้างจาก backend -->
+    <!-- ผลลัพธ์ตรวจสอบแบบมีโครงสร้างจาก backend -->
     <div class="result-col">
     <Transition name="fade">
       <div v-if="result" ref="resultBoxEl" class="result-box" :style="{ '--v-color': verdict?.color }">
@@ -117,52 +117,50 @@
         <div class="corner bl"></div>
         <div class="corner br"></div>
 
+        <!-- ===== ป้ายผลสรุป (verdict banner) — สิ่งแรกที่ต้องเห็น มองปุ๊บรู้เลยว่ากินได้ไหม ===== -->
+        <div v-if="verdict" class="verdict-banner top-banner">
+          <svg v-if="heroIcon === 'safe'" class="verdict-banner-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6" /></svg>
+          <svg v-else-if="heroIcon === 'danger'" class="verdict-banner-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+          <svg v-else class="verdict-banner-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.3 4.4L2.7 18a1.6 1.6 0 0 0 1.4 2.4h15.8a1.6 1.6 0 0 0 1.4-2.4L13.7 4.4a1.6 1.6 0 0 0-2.8 0z" />
+            <path d="M12 9.5v3.6" /><circle cx="12" cy="16.3" r="0.5" fill="currentColor" stroke="none" />
+          </svg>
+          <div class="verdict-banner-copy">
+            <span class="verdict-banner-eyebrow">{{ verdict.eyebrow }}</span>
+            <span class="verdict-banner-text">{{ verdict.title }}</span>
+          </div>
+        </div>
+
         <button type="button" class="rescan-link" @click="retake">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
           สแกนใหม่
         </button>
 
-        <div class="result-header">
-          <span class="eyebrow result-eyebrow">STEP 02 · RESULT</span>
-          <span v-if="verdict" class="status-pill">
-            <span class="status-dot"></span>
-            {{ verdict.eyebrow }}
-          </span>
-        </div>
-
         <!-- ===== การ์ดสรุปผลแบบเห็นชัด (hero) ===== -->
         <div class="hero-block">
-          <span class="hero-caption">สรุปผลการวิเคราะห์ความปลอดภัยของอาหาร</span>
-
-          <div class="hero-photo-wrap">
-            <div class="hero-glow"></div>
-            <div class="hero-photo">
-              <img v-if="imageUrl" :src="imageUrl" alt="ภาพสินค้าที่วิเคราะห์" />
+          
+          <!-- รูป + ชื่ออาหาร วางคู่กัน ให้ชื่ออาหารเด่นชัด อ่านง่ายกว่าเดิม -->
+          <div class="identity-row">
+            <div class="hero-photo-wrap">
+              <div class="hero-glow"></div>
+              <div class="hero-photo">
+                <img v-if="imageUrl" :src="imageUrl" alt="ภาพสินค้าที่ตรวจสอบ" />
+              </div>
+              <div class="hero-badge">
+                <svg v-if="heroIcon === 'safe'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6" /></svg>
+                <svg v-else-if="heroIcon === 'danger'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+                <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M10.3 4.4L2.7 18a1.6 1.6 0 0 0 1.4 2.4h15.8a1.6 1.6 0 0 0 1.4-2.4L13.7 4.4a1.6 1.6 0 0 0-2.8 0z" />
+                  <path d="M12 9.5v3.6" /><circle cx="12" cy="16.3" r="0.5" fill="currentColor" stroke="none" />
+                </svg>
+              </div>
             </div>
-            <div class="hero-badge">
-              <svg v-if="heroIcon === 'safe'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6" /></svg>
-              <svg v-else-if="heroIcon === 'danger'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
-              <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M10.3 4.4L2.7 18a1.6 1.6 0 0 0 1.4 2.4h15.8a1.6 1.6 0 0 0 1.4-2.4L13.7 4.4a1.6 1.6 0 0 0-2.8 0z" />
-                <path d="M12 9.5v3.6" /><circle cx="12" cy="16.3" r="0.5" fill="currentColor" stroke="none" />
-              </svg>
+
+            <div class="identity-copy">
+              <p class="hero-product-name">{{ result.product_name || 'ไม่ทราบชื่อสินค้า' }}</p>
+              <p v-if="result.brand" class="hero-product-brand">{{ result.brand }}</p>
             </div>
           </div>
-
-          <div v-if="verdict" class="verdict-banner">
-            <svg v-if="heroIcon === 'safe'" class="verdict-banner-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6" /></svg>
-            <svg v-else-if="heroIcon === 'danger'" class="verdict-banner-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
-            <svg v-else class="verdict-banner-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M10.3 4.4L2.7 18a1.6 1.6 0 0 0 1.4 2.4h15.8a1.6 1.6 0 0 0 1.4-2.4L13.7 4.4a1.6 1.6 0 0 0-2.8 0z" />
-              <path d="M12 9.5v3.6" /><circle cx="12" cy="16.3" r="0.5" fill="currentColor" stroke="none" />
-            </svg>
-            <span class="verdict-banner-text">{{ verdict.title }}</span>
-          </div>
-
-          <p v-if="result.product_name || result.brand" class="hero-product-pill">
-            {{ result.product_name || 'ไม่ทราบชื่อสินค้า' }}
-            <span v-if="result.brand">· {{ result.brand }}</span>
-          </p>
 
           <div class="hero-summary-box">
             <!-- summary จาก Gemini เป็นข้อความเฉพาะของสินค้านี้ -->
@@ -172,9 +170,18 @@
               <svg class="toggle-chevron" :class="{ flipped: showDetails }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6" /></svg>
             </button>
           </div>
+
+          <!-- คำเตือนว่าผลมาจาก AI แสดงตลอดเวลา ไม่ต้องกด "ดูรายละเอียด" ก่อน -->
+          <p class="ai-disclaimer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10.3 4.4L2.7 18a1.6 1.6 0 0 0 1.4 2.4h15.8a1.6 1.6 0 0 0 1.4-2.4L13.7 4.4a1.6 1.6 0 0 0-2.8 0z" />
+              <path d="M12 9.5v3.6" /><circle cx="12" cy="16.3" r="0.5" fill="currentColor" stroke="none" />
+            </svg>
+            <span>ผลตรวจสอบนี้ประมวลผลด้วย AI อาจมีความคลาดเคลื่อนได้ โปรดตรวจสอบฉลากจริงหรือปรึกษาแพทย์/ผู้เชี่ยวชาญก่อนตัดสินใจ</span>
+          </p>
         </div>
 
-        <!-- ===== คำแนะนำด้านสุขภาพและโภชนาการ (จากข้อมูลจริงของผลวิเคราะห์เท่านั้น) ===== -->
+        <!-- ===== คำแนะนำด้านสุขภาพและโภชนาการ (จากข้อมูลจริงของผลตรวจสอบเท่านั้น) ===== -->
         <div v-if="result.recommendation || result.flagged_ingredients?.length" class="tips-card">
           <span class="section-label tips-label">คำแนะนำด้านสุขภาพและโภชนาการ</span>
           <div class="tips-list">
@@ -288,25 +295,25 @@
           <path d="M9.5 12l1.8 1.8L15 10" />
         </svg>
         <span class="eyebrow">STEP 02 · RESULT</span>
-        <p>ผลวิเคราะห์จะแสดงตรงนี้ หลังกดปุ่ม "วิเคราะห์ภาพ"</p>
+        <p>ผลตรวจสอบจะแสดงตรงนี้ หลังกดปุ่ม "ตรวจสอบภาพ"</p>
       </div>
     </Transition>
     </div><!-- /.result-col -->
 
     </div><!-- /.layout-grid -->
 
-    <!-- ===== หน้ากำลังวิเคราะห์ (full-screen overlay) ===== -->
-    <!-- ขึ้นทันทีที่กดปุ่ม "วิเคราะห์ภาพ" แล้วหายไปทันทีที่ผลลัพธ์พร้อม เผยหน้าผลลัพธ์ด้านหลังเลย -->
+    <!-- ===== หน้ากำลังตรวจสอบ (full-screen overlay) ===== -->
+    <!-- ขึ้นทันทีที่กดปุ่ม "ตรวจสอบภาพ" แล้วหายไปทันทีที่ผลลัพธ์พร้อม เผยหน้าผลลัพธ์ด้านหลังเลย -->
     <Teleport to="body">
       <Transition name="fade">
         <div v-if="analyzing" class="analyzing-overlay">
           <div class="analyzing-card">
             <div class="analyzing-photo">
-              <img v-if="imageUrl" :src="imageUrl" alt="ภาพที่กำลังวิเคราะห์" />
+              <img v-if="imageUrl" :src="imageUrl" alt="ภาพที่กำลังตรวจสอบ" />
               <div class="scan-line"></div>
             </div>
             <div class="analyzing-spinner"></div>
-            <h2 class="analyzing-title">กำลังวิเคราะห์...</h2>
+            <h2 class="analyzing-title">กำลังตรวจสอบ...</h2>
             <p class="analyzing-step">{{ analyzingMessages[analyzingStep] }}</p>
             <div class="analyzing-progress"><span></span></div>
           </div>
@@ -317,15 +324,16 @@
 </template>
 
 <script setup>
-import { ref, onBeforeUnmount, computed, nextTick } from 'vue'
+import { ref, onBeforeUnmount, computed, nextTick, watch } from 'vue'
 import { scanFood, getHealthProfile } from '../lib/api.js'
 import { getVerdict, statusToVerdictKey } from '../lib/verdict.js'
+import { scanResetSignal } from '../lib/scanReset.js'
 
 // ---------- ตั้งค่า Backend API ----------
 // ใช้ scanFood() / getHealthProfile() จาก src/lib/api.js
 // (client เดิมของโปรเจกต์ จัดการ device_id, JWT, error message ให้ครบอยู่แล้ว)
 
-// mode: 'idle' -> 'camera' (กำลังเปิดกล้องอยู่) -> 'preview' (มีรูปพร้อมวิเคราะห์)
+// mode: 'idle' -> 'camera' (กำลังเปิดกล้องอยู่) -> 'preview' (มีรูปพร้อมตรวจสอบ)
 const mode = ref('idle')
 
 const videoEl = ref(null)
@@ -333,7 +341,7 @@ const canvasEl = ref(null)
 const galleryInput = ref(null)
 
 const imageUrl = ref(null)   // URL สำหรับ <img> preview
-const imageBlob = ref(null)  // ไฟล์รูปจริง เก็บไว้ส่งให้ backend ตอนกด "วิเคราะห์ภาพ"
+const imageBlob = ref(null)  // ไฟล์รูปจริง เก็บไว้ส่งให้ backend ตอนกด "ตรวจสอบภาพ"
 
 const isDragging = ref(false)
 const cameraError = ref('')
@@ -344,7 +352,7 @@ const analyzeNote = ref('')
 const result = ref(null)   // ผลลัพธ์ JSON แบบมีโครงสร้างจาก backend (analyze_food)
 const resultBoxEl = ref(null)
 
-// ข้อความสลับหมุนเวียนตอนหน้า "กำลังวิเคราะห์" (แค่ให้ดูมีความคืบหน้า ไม่ผูกกับ progress จริงจาก backend)
+// ข้อความสลับหมุนเวียนตอนหน้า "กำลังตรวจสอบ" (แค่ให้ดูมีความคืบหน้า ไม่ผูกกับ progress จริงจาก backend)
 const analyzingMessages = [
   'กำลังอ่านฉลากโภชนาการ...',
   'กำลังตรวจสอบส่วนผสม...',
@@ -470,7 +478,7 @@ function retake() {
   mode.value = 'idle'
 }
 
-// ---------- วิเคราะห์ภาพ: ส่งไป backend ผ่าน scanFood() (POST /analyze/scan) ----------
+// ---------- ตรวจสอบภาพ: ส่งไป backend ผ่าน scanFood() (POST /analyze/scan) ----------
 async function analyzeImage() {
   if (!imageBlob.value) return
 
@@ -479,14 +487,14 @@ async function analyzeImage() {
   result.value = null
   showDetails.value = false
 
-  // เริ่มสลับข้อความบนหน้ากำลังวิเคราะห์ ทุก 1.4 วิ วนไปเรื่อยๆ จนกว่าจะเสร็จ
+  // เริ่มสลับข้อความบนหน้ากำลังตรวจสอบ ทุก 1.4 วิ วนไปเรื่อยๆ จนกว่าจะเสร็จ
   analyzingStep.value = 0
   analyzingTimer = setInterval(() => {
     analyzingStep.value = (analyzingStep.value + 1) % analyzingMessages.length
   }, 1400)
 
   try {
-    // ดึงโปรไฟล์สุขภาพล่าสุดจาก backend ก่อนส่งวิเคราะห์
+    // ดึงโปรไฟล์สุขภาพล่าสุดจาก backend ก่อนส่งตรวจสอบ
     // (ถ้ายังไม่เคยตั้งค่า/ยังไม่ login ก็ปล่อยเป็น {} ได้ — backend จัดการ fallback ให้)
     let healthProfile = {}
     try {
@@ -504,14 +512,14 @@ async function analyzeImage() {
     // เช่น { status, product_name, brand, ingredients, flagged_ingredients, summary, recommendation, disclaimer, ... }
     result.value = analysis
   } catch (err) {
-    analyzeNote.value = err.message || 'เกิดข้อผิดพลาดในการวิเคราะห์'
+    analyzeNote.value = err.message || 'เกิดข้อผิดพลาดในการตรวจสอบ'
   } finally {
     clearInterval(analyzingTimer)
     analyzingTimer = null
     analyzing.value = false
   }
 
-  // วิเคราะห์เสร็จและสำเร็จ -> เลื่อนจอขึ้นไปบนสุดให้เห็นหน้าผลลัพธ์ทันที
+  // ตรวจสอบเสร็จและสำเร็จ -> เลื่อนจอขึ้นไปบนสุดให้เห็นหน้าผลลัพธ์ทันที
   if (result.value) {
     await nextTick()
     resultBoxEl.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -546,13 +554,21 @@ onBeforeUnmount(() => {
   if (imageUrl.value) URL.revokeObjectURL(imageUrl.value)
   if (analyzingTimer) clearInterval(analyzingTimer)
 })
+
+// ---------- รีเซ็ตกลับเป็นหน้าสแกนใหม่ ----------
+// ถูกเรียกตอนกดปุ่ม "หน้าแรก" ในนาวบาร์ ทั้งที่อยู่หน้านี้อยู่แล้ว (route ไม่เปลี่ยน component เลย
+// ไม่ re-mount เอง) ใช้ scanResetSignal จาก App.vue เป็นตัวบอกจังหวะ
+watch(scanResetSignal, () => {
+  stopStream()   // เผื่อกำลังเปิดกล้องค้างอยู่
+  retake()       // เคลียร์ภาพ/ผลลัพธ์เดิม กลับไปโหมด 'idle'
+})
 </script>
 
 <style scoped>
 .scan-page { max-width: 520px; margin: 0 auto; padding: 28px 20px 20px; }
 
 /* --- เลย์เอาต์คอลัมน์เดียว จัดกึ่งกลาง: ตอนถ่าย/เลือกรูป โชว์แค่การ์ดถ่ายรูป
-   พอวิเคราะห์เสร็จ การ์ดถ่ายรูปหายไป โชว์แค่การ์ดผลลัพธ์แทน (ไม่แบ่ง 2 คอลัมน์อีกต่อไป) --- */
+   พอตรวจสอบเสร็จ การ์ดถ่ายรูปหายไป โชว์แค่การ์ดผลลัพธ์แทน (ไม่แบ่ง 2 คอลัมน์อีกต่อไป) --- */
 .layout-grid { display: block; }
 .result-col { margin-top: 0; }
 .result-placeholder { display: none; }
@@ -692,74 +708,81 @@ onBeforeUnmount(() => {
 }
 .result-box .corner { border-color: color-mix(in srgb, var(--v-color) 55%, var(--line)); }
 
-.result-header {
-  display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;
-}
-.result-eyebrow { color: var(--v-color); }
-.status-pill {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
-  padding: 5px 12px 5px 10px; border-radius: 999px;
-  color: var(--v-color);
-  background: color-mix(in srgb, var(--v-color) 14%, white);
-}
-.status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--v-color); }
-
 .result-identity { display: none; } /* แทนที่ด้วย .hero-block ด้านล่างแล้ว */
 
 .result-text { margin: 0; font-size: 14px; line-height: 1.75; white-space: pre-wrap; color: var(--ink); }
 
 /* ===== hero: การ์ดสรุปผลแบบเห็นชัด ===== */
 .hero-block {
-  display: flex; flex-direction: column; align-items: center; text-align: center;
-  padding: 6px 0 20px; margin-bottom: 4px;
-}
-.hero-caption {
-  font-size: 12.5px; font-weight: 700; color: var(--muted); margin-bottom: 18px;
+  display: flex; flex-direction: column; align-items: stretch; text-align: left;
+  padding: 4px 0 18px; margin-bottom: 4px;
 }
 
-.hero-photo-wrap { position: relative; width: 132px; height: 132px; margin-bottom: 16px; }
+/* รูป + ชื่ออาหาร วางแนวนอน ให้ชื่ออาหารเด่นและอ่านง่ายกว่าเดิม */
+.identity-row {
+  display: flex; align-items: center; gap: 14px; width: 100%; margin-bottom: 16px;
+}
+.identity-copy { min-width: 0; }
+.hero-product-name {
+  margin: 0 0 2px; font-size: 19px; font-weight: 800; line-height: 1.3;
+  color: var(--ink); overflow-wrap: break-word;
+}
+.hero-product-brand { margin: 0; font-size: 13px; font-weight: 600; color: var(--muted); }
+
+.hero-photo-wrap { position: relative; width: 84px; height: 84px; margin-bottom: 0; flex: none; }
 .hero-glow {
-  position: absolute; inset: -30px;
+  position: absolute; inset: -16px;
   background: radial-gradient(circle, color-mix(in srgb, var(--v-color) 30%, transparent) 0%, transparent 70%);
   z-index: 0;
 }
 .hero-photo {
-  position: relative; z-index: 1; width: 132px; height: 132px; border-radius: 50%;
+  position: relative; z-index: 1; width: 84px; height: 84px; border-radius: 50%;
   overflow: hidden; background: var(--bg);
   border: 3px solid var(--white);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--v-color) 45%, white), 0 10px 24px -8px color-mix(in srgb, var(--v-color) 45%, transparent);
 }
 .hero-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .hero-badge {
-  position: absolute; z-index: 2; right: -2px; bottom: -2px;
-  width: 40px; height: 40px; border-radius: 50%;
+  position: absolute; z-index: 2; right: -3px; bottom: -3px;
+  width: 28px; height: 28px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   background: var(--v-color); color: #fff;
-  border: 3px solid var(--white);
+  border: 2.5px solid var(--white);
 }
-.hero-badge svg { width: 19px; height: 19px; }
+.hero-badge svg { width: 13px; height: 13px; }
 
-.verdict-banner {
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-  width: 100%; padding: 16px 18px; margin: 0 0 14px;
+/* ป้ายผลสรุป — สิ่งแรกบนสุดของการ์ดผล มองปุ๊บรู้ทันทีว่ากินได้ไหม ไม่ใช่ปุ่มกด (ไม่มี hover/cursor) */
+.verdict-banner.top-banner {
+  display: flex; align-items: center; justify-content: flex-start; gap: 14px;
+  width: 100%; padding: 18px 18px; margin: 0 0 18px;
   background: var(--v-color); border-radius: var(--radius-md);
   box-shadow: 0 10px 22px -10px color-mix(in srgb, var(--v-color) 70%, transparent);
   animation: verdict-pop 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.3);
 }
-.verdict-banner-icon { flex: none; width: 26px; height: 26px; color: #fff; }
-.verdict-banner-text { font-size: 19px; font-weight: 800; line-height: 1.3; color: #fff; }
+.verdict-banner-icon {
+  flex: none; width: 30px; height: 30px; color: #fff;
+  padding: 7px; box-sizing: content-box;
+  background: rgba(255, 255, 255, 0.18); border-radius: 50%;
+}
+.verdict-banner-copy { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.verdict-banner-eyebrow {
+  font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.08em; color: rgba(255, 255, 255, 0.8); text-transform: uppercase;
+}
+.verdict-banner-text { font-size: 20px; font-weight: 800; line-height: 1.25; color: #fff; }
 @keyframes verdict-pop {
-  0% { transform: scale(0.9); opacity: 0; }
+  0% { transform: scale(0.96); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
 }
 
-.hero-product-pill {
-  margin: 0 0 16px; font-size: 13px; font-weight: 600; color: var(--ink);
-  background: var(--bg); border: 1px solid var(--line);
-  padding: 7px 16px; border-radius: 999px;
+/* คำเตือนว่าผลมาจาก AI — แสดงตลอด ไม่ซ่อนไว้หลังปุ่ม "ดูรายละเอียด" */
+.ai-disclaimer {
+  display: flex; align-items: flex-start; gap: 8px;
+  margin: 12px 0 0; padding: 10px 12px; border-radius: 10px;
+  background: var(--bg); border: 1px dashed var(--line);
+  font-size: 11.5px; line-height: 1.55; color: var(--muted); text-align: left;
 }
-.hero-product-pill span { color: var(--muted); font-weight: 500; }
+.ai-disclaimer svg { flex: none; width: 14px; height: 14px; margin-top: 1px; color: var(--orange); }
 
 .hero-summary-box {
   width: 100%; padding: 16px 18px 14px; border-radius: var(--radius-md);
@@ -788,7 +811,8 @@ onBeforeUnmount(() => {
 .tips-list { display: flex; flex-direction: column; gap: 8px; }
 .tip-row {
   display: flex; align-items: flex-start; gap: 11px;
-  padding: 11px 12px; border-radius: 12px; background: var(--green-tint);
+  padding: 11px 12px; border-radius: 12px;
+  background: color-mix(in srgb, var(--v-color) 12%, white);
   border: none; width: 100%; text-align: left; font: inherit; cursor: default;
 }
 .tip-row-link { cursor: pointer; background: var(--bg); }
@@ -796,7 +820,7 @@ onBeforeUnmount(() => {
 .tip-icon {
   flex: none; width: 30px; height: 30px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  color: var(--green-deep); background: color-mix(in srgb, var(--green) 16%, white);
+  color: var(--v-color); background: color-mix(in srgb, var(--v-color) 16%, white);
 }
 .tip-icon.warn { color: var(--orange); background: color-mix(in srgb, var(--orange) 16%, white); }
 .tip-icon svg { width: 15px; height: 15px; }
@@ -851,7 +875,7 @@ onBeforeUnmount(() => {
 .fade-enter-active, .fade-leave-active { transition: opacity 0.2s ease; }
 .fade-enter-from, .fade-leave-to { opacity: 0; }
 
-/* ===== หน้ากำลังวิเคราะห์ (full-screen overlay, teleport ไปที่ body) ===== */
+/* ===== หน้ากำลังตรวจสอบ (full-screen overlay, teleport ไปที่ body) ===== */
 .analyzing-overlay {
   position: fixed; inset: 0; z-index: 999;
   display: flex; align-items: center; justify-content: center;

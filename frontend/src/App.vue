@@ -3,7 +3,7 @@
     <header class="topbar">
       <router-link to="/" class="brand">
         <span class="brand-leaf">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c-4 3-7 7-7 11a7 7 0 0 0 14 0c0-4-3-8-7-11z"/></svg>
+          <img src="./assets/logo-mark.png" alt="กินเลย" />
         </span>
         <span class="brand-text">
           <b>กินเลย</b>
@@ -84,10 +84,10 @@ function handleLogout() {
 
 .brand { display: inline-flex; align-items: center; gap: 8px; margin-right: auto; }
 .brand-leaf {
-  width: 30px; height: 30px; color: var(--green);
+  width: 32px; height: 32px;
   display: flex; align-items: center; justify-content: center;
 }
-.brand-leaf svg { width: 24px; height: 24px; }
+.brand-leaf img { width: 32px; height: 32px; object-fit: contain; }
 .brand-text { display: flex; flex-direction: column; line-height: 1.2; }
 .brand-text b { font-size: 17px; color: var(--orange); }
 .brand-text em {

@@ -7,7 +7,7 @@
       <div class="scan-line"></div>
 
       <router-link to="/" class="brand-logo">
-        <div class="logo-mark">ก</div>
+        <div class="logo-mark"><img src="../assets/logo-mark.png" alt="กินเลย" /></div>
         <span>กินเลย</span>
       </router-link>
 
@@ -162,10 +162,12 @@ async function handleLogin() {
 
 .brand-logo { position: relative; display: flex; align-items: center; gap: 10px; text-decoration: none; color: #fff; width: fit-content; }
 .brand-logo .logo-mark {
-  width: 38px; height: 38px; border-radius: 12px;
-  background: linear-gradient(155deg, var(--green) 0%, var(--green-deep) 130%);
-  display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 17px;
+  width: 42px; height: 42px; border-radius: 12px;
+  background: #fff; padding: 6px; box-sizing: border-box;
+  box-shadow: 0 4px 14px -4px rgba(0,0,0,0.35);
+  display: flex; align-items: center; justify-content: center;
 }
+.brand-logo .logo-mark img { width: 100%; height: 100%; object-fit: contain; }
 .brand-logo span { font-weight: 700; font-size: 17px; }
 
 .brand-copy { position: relative; }

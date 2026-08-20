@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 import ScanView from '../views/ScanView.vue'
 import HistoryView from '../views/HistoryView.vue'
 import ProfileView from '../views/ProfileView.vue'
@@ -15,8 +14,10 @@ const PUBLIC_ROUTE_NAMES = new Set(['login', 'register', 'forgot-password'])
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: '/', name: 'home', component: HomeView, meta: { requiresAuth: true } },
-    { path: '/scan', name: 'scan', component: ScanView, meta: { requiresAuth: true } },
+    // หน้าแรก = หน้าสแกนเลย (ไม่มี HomeView แยกแล้ว)
+    { path: '/', name: 'home', component: ScanView, meta: { requiresAuth: true } },
+    // เผื่อลิงก์/บุ๊กมาร์กเก่าที่ยังชี้ไป /scan — ส่งกลับไปหน้าแรกแทน
+    { path: '/scan', redirect: '/' },
     { path: '/history', name: 'history', component: HistoryView, meta: { requiresAuth: true } },
     { path: '/profile', name: 'profile', component: ProfileView, meta: { requiresAuth: true } },
     { path: '/tips', name: 'tips', component: TipsView, meta: { requiresAuth: true } },
