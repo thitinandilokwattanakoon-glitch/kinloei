@@ -8,7 +8,91 @@ from core.config import settings  # still needed for gemini_api_key
 
 logger = logging.getLogger(__name__)
 
-client = genai.Client(api_key=settings.gemini_api_key)
+if settings.use_vertex_ai:
+    if not settings.google_cloud_project:
+        raise RuntimeError(
+            "USE_VERTEX_AI=true แต่ไม่ได้ตั้ง GOOGLE_CLOUD_PROJECT ใน .env — "
+            "ต้องระบุ project id ของ Google Cloud ก่อนใช้ Vertex AI"
+        )
+    # ใช้ Application Default Credentials (ADC) แทน API key —
+    # ต้องรัน `gcloud auth application-default login` บนเครื่องนี้มาก่อน
+    client = genai.Client(
+        vertexai=True,
+        project=settings.google_cloud_project,
+        location=settings.google_cloud_location,
+    )
+    logger.info(
+        "[Gemini] ใช้ Vertex AI (project=%s, location=%s)",
+        settings.google_cloud_project,
+        settings.google_cloud_location,
+    )
+else:
+    _keys = settings.gemini_api_key_list
+    if not _keys:
+        raise RuntimeError(
+            "ไม่ได้ตั้ง GEMINI_API_KEY หรือ GEMINI_API_KEYS ใน .env (หรือเปลี่ยนไปใช้ USE_VERTEX_AI=true แทน)"
+        )
+
+    def _is_key_exhausted(exc: Exception) -> bool:
+        """เช็คว่า error นี้เกิดจากตัว key เอง (โควต้าหมด/ถูกปฏิเสธ) ไม่ใช่ปัญหา request —
+        ครอบคลุมทั้ง 429 quota ปกติ และบั๊ก 401 ACCESS_TOKEN_TYPE_UNSUPPORTED ที่เจอบ่อยช่วงนี้
+        (เผื่อบั๊กนี้เกิดกับบาง key เท่านั้น การสลับ key จะช่วยให้รอดได้บางครั้ง)"""
+        err = str(exc).lower()
+        status = getattr(exc, "status_code", None) or getattr(exc, "code", None) or 0
+        return (
+            status in (401, 403, 429)
+            or "429" in err
+            or "quota" in err
+            or "resource exhausted" in err
+            or "rate limit" in err
+            or "unauthenticated" in err
+            or "access_token_type_unsupported" in err
+            or "api key not valid" in err
+            or "permission denied" in err
+        )
+
+    class _RotatingModels:
+        """ตัวแทน client.aio.models เดิม แต่วนลอง key ถัดไปอัตโนมัติเมื่อ key ปัจจุบันใช้ไม่ได้"""
+
+        def __init__(self, api_keys: list[str]):
+            self._keys = api_keys
+            self._clients = [genai.Client(api_key=k) for k in api_keys]
+            self._active = 0  # index ของ key ที่ใช้ล่าสุดแล้วสำเร็จ — เริ่มรอบถัดไปจากตัวนี้ก่อน
+
+        async def generate_content(self, **kwargs):
+            n = len(self._clients)
+            last_error: Exception | None = None
+            for step in range(n):
+                i = (self._active + step) % n
+                try:
+                    response = await self._clients[i].aio.models.generate_content(**kwargs)
+                    if i != self._active:
+                        logger.warning(
+                            "[Gemini] สลับไปใช้ API key #%d/%d อัตโนมัติ (key เดิมใช้ไม่ได้)",
+                            i + 1, n,
+                        )
+                        self._active = i  # จำ key ที่ใช้ได้ล่าสุดไว้ใช้ต่อในรอบถัดไปเลย ไม่ต้องไล่จาก key #1 ใหม่ทุกครั้ง
+                    return response
+                except Exception as e:
+                    last_error = e
+                    if _is_key_exhausted(e):
+                        logger.warning(
+                            "[Gemini] API key #%d/%d ใช้ไม่ได้ (%.100s) กำลังลอง key ถัดไป...",
+                            i + 1, n, str(e),
+                        )
+                        continue  # โควต้าหมด/token พัง — ลอง key ถัดไป
+                    raise  # error อื่น (เช่น request ผิดรูปแบบ) ไม่เกี่ยวกับ key ไม่ต้องเปลืองการลอง key อื่น
+            raise last_error or RuntimeError("Gemini API keys ทั้งหมดใช้งานไม่ได้")
+
+    class _RotatingClient:
+        def __init__(self, api_keys: list[str]):
+            self.aio = type("Aio", (), {"models": _RotatingModels(api_keys)})()
+
+    client = _RotatingClient(_keys)
+    logger.info(
+        "[Gemini] ใช้ Gemini API key แบบปกติ (%d key พร้อมสลับอัตโนมัติเมื่อจำเป็น)",
+        len(_keys),
+    )
 
 # Fallback chain — ตรงตามสูตร TS OCR reference
 # skip to next model เฉพาะ quota (429) หรือ server error (5xx) เท่านั้น

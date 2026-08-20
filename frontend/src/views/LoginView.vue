@@ -12,24 +12,21 @@
       </router-link>
 
       <div class="brand-copy">
-        <span class="brand-eyebrow">WELCOME BACK</span>
+        <span class="brand-eyebrow">แอปพลิเคชั่นวิเคราะห์ความเสี่ยงของอาหารจาก
+ฉลากบนบรรจุภัณฑ์</span>
         <h1>ถ่ายรูป<br />ก่อน<em>กินเลย</em></h1>
-        <p>เข้าสู่ระบบเพื่อดูประวัติการสแกน และให้ Gemini จำโปรไฟล์สุขภาพของคุณไว้</p>
       </div>
 
       <div class="brand-badge">
         <div class="badge-dot"></div>
-        <span>GEMINI 3 FLASH · ONLINE</span>
+        <span>Power by GEMINI 3.6 FLASH</span>
       </div>
     </div>
 
     <!-- Form side -->
     <div class="form-side">
       <div class="form-topbar">
-        <router-link to="/" class="back-link">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
-          กลับหน้าแรก
-        </router-link>
+        
         <router-link to="/register" class="form-topbar-link">ยังไม่มีบัญชี? สมัครสมาชิก</router-link>
       </div>
 
@@ -129,7 +126,19 @@ async function handleLogin() {
 }
 @media (max-width: 900px) {
   .auth-shell { grid-template-columns: 1fr; }
-  .brand-side { display: none; }
+
+  .brand-side {
+    display: flex;
+    padding: 28px 24px 22px;
+  }
+  .brand-logo .logo-mark { width: 64px; height: 64px; border-radius: 16px; }
+  .brand-logo span { font-size: 20px; }
+  .brand-copy h1 { font-size: clamp(26px, 7vw, 34px); margin-bottom: 12px; }
+  .brand-eyebrow { margin-bottom: 10px; font-size: 11px; }
+
+  .form-side { padding: 20px 20px 32px; }
+  .form-center { align-items: flex-start; justify-content: flex-start; }
+  .form-card { margin: 16px 0 0; }
 }
 
 /* Brand side */
@@ -173,7 +182,7 @@ async function handleLogin() {
 .brand-copy { position: relative; }
 .brand-eyebrow {
   font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; font-weight: 700;
-  letter-spacing: 0.14em; color: var(--green); display: block; margin-bottom: 16px;
+   color: var(--green); display: block; margin-bottom: 16px;
 }
 .brand-copy h1 { font-size: clamp(34px, 4.4vw, 52px); line-height: 1.15; font-weight: 700; margin: 0 0 18px; }
 .brand-copy h1 em {
